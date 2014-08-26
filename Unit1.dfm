@@ -3,7 +3,7 @@ object Form1: TForm1
   Top = 265
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  Caption = #39'IP2Location Delphi Example | DeadC0der |'
+  Caption = 'IP2Location DEMO | DeadC0der - DeadC0der7@gmail.com |'
   ClientHeight = 323
   ClientWidth = 550
   Color = clBtnFace
@@ -66,7 +66,7 @@ object Form1: TForm1
     end
     object btn1: TButton
       Left = 516
-      Top = 18
+      Top = 19
       Width = 22
       Height = 21
       Caption = '...'
@@ -76,7 +76,7 @@ object Form1: TForm1
   end
   object rg1: TRadioGroup
     Left = 2
-    Top = 64
+    Top = 60
     Width = 545
     Height = 54
     Caption = 'Open Mode'
@@ -93,7 +93,7 @@ object Form1: TForm1
   object grp2: TGroupBox
     Left = 3
     Top = 118
-    Width = 542
+    Width = 545
     Height = 184
     Caption = 'IP2Location'
     Enabled = False

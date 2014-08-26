@@ -5,8 +5,7 @@
 //    functions of IP2Location library in     //
 //                     a GUI                  //
 //                                            //
-//      Coded by: Benbaha Abdelkrim           //
-//                  AKA DeadC0der             //
+//      Coded by:    DeadC0der                //
 //              DeadC0der7@gmail.com          //
  /////////////////////////////////////////////
 
@@ -16,8 +15,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, XPMan, ComCtrls, StdCtrls,IP2Location,IP2Loc_DBInterface,
-  ExtCtrls;
+  Dialogs, XPMan, ComCtrls, StdCtrls,IP2Location,IP2Loc_DBInterface, ExtCtrls;
 
 type
   TForm1 = class(TForm)
@@ -52,7 +50,7 @@ type
 
 var
   Form1: TForm1;
-  Ip2Loc:TIP2Location;
+  IP2Loc:TIP2Location;
   SampleIp:string;
   KeysSet:set of char;
 
@@ -69,7 +67,7 @@ end;
 
 procedure TForm1.edt1Change(Sender: TObject);
 begin
-IP2Location_DB_close(Ip2Loc.filehandle);
+IP2Location_close(IP2Loc);
 IP2Loc:=IP2Location_open(pchar(edt1.text));
 rg1.Enabled:=(edt1.text<>'') and (Ip2Loc.filehandle<>-1) ;
 begin
@@ -94,13 +92,10 @@ end;
 
 procedure TForm1.rg1Click(Sender: TObject);
 begin
- 
  try
  if (Ip2Loc.filehandle<>-1) and (rg1.ItemIndex <>-1) then
   begin
-
-  if IP2Location_open_mem(Ip2Loc,TIP2LOCATION_mem_Type(rg1.ItemIndex)) =-1 then
-
+   if IP2Location_open_mem(Ip2Loc,TIP2LOCATION_mem_Type(rg1.ItemIndex)) =-1 then
     MessageDlg('Failed to load file into memory or already opened',mtError,[mbok],0);
 
   end
@@ -130,29 +125,31 @@ begin
 if not( Key in KeysSet) then
  key:=#0;
  if Key=#13 then
- begin
-  Ip2LocRec:=IP2Location_get_country_all(Ip2Loc,pchar(edt2.Text));
-  with lv1.Items.Add,Ip2LocRec do
-   begin
-   Caption:=edt2.Text;
-   SubItems.Add(country_short);
-   SubItems.Add(country_long);
-   SubItems.Add(region);
-   SubItems.Add(city);
-   SubItems.Add(Format('%0.5f',[latitude]));
-   SubItems.Add(Format('%0.5f',[longitude]));
-   SubItems.Add(zipcode);
-   SubItems.Add(timezone);
-   SubItems.Add(isp);
-   SubItems.Add(domain);
-   SubItems.Add(netspeed);
-   SubItems.Add(areacode);
-   SubItems.Add(weatherstationname);
-   SubItems.Add(mobilebrand);
-   SubItems.Add(FloatToStr(elevation));
-   SubItems.Add(usagetype);
-  end;
-  end;
+  try
+   Ip2LocRec:=IP2Location_get_country_all(Ip2Loc,pchar(edt2.Text));
+    with lv1.Items.Add,Ip2LocRec do
+      begin
+       Caption:=edt2.Text;
+       SubItems.Add(country_short);
+       SubItems.Add(country_long);
+       SubItems.Add(region);
+       SubItems.Add(city);
+       SubItems.Add(Format('%0.5f',[latitude]));
+       SubItems.Add(Format('%0.5f',[longitude]));
+       SubItems.Add(zipcode);
+       SubItems.Add(timezone);
+       SubItems.Add(isp);
+       SubItems.Add(domain);
+       SubItems.Add(netspeed);
+       SubItems.Add(areacode);
+       SubItems.Add(weatherstationname);
+       SubItems.Add(mobilebrand);
+       SubItems.Add(FloatToStr(elevation));
+       SubItems.Add(usagetype);
+      end;
+   except
+
+   end;
 end;
 procedure TForm1.tmr1Timer(Sender: TObject);
 begin

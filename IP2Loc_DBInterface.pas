@@ -1,7 +1,7 @@
  ////////////////////////////////////////////////
 // Unit      : IP2Loc_DBInterface.pas           //
-// Version   : 1.0 beta                         //
-// Date      : April 2014                       //
+// Version   : 1.1 beta                         //
+// Date      : August 2014                      //
 // Translator: Benbaha Abdelkrim AKA DeadC0der  //
 // Email     : DeadC0der7@gmail.com             //
 // License   : Included :)                      //
@@ -16,12 +16,18 @@ uses Windows,SysUtils;
 type
  TIP2Location_mem_type =(IP2LOCATION_FILE_IO,IP2LOCATION_CACHE_MEMORY,IP2LOCATION_SHARED_MEMORY);
 
- function  IP2Location_read128(handle:integer;position:DWORD):PAnsiChar;
- function  IP2Location_read32(handle:integer;position:DWORD):DWORD;
- function  IP2Location_read8(handle:integer;position:DWORD):Byte;
- function  IP2Location_readStr(handle:integer;position:DWORD):PChar;
- function  IP2Location_readFloat(handle:integer;position:DWORD):Single;
- function  IP2Location_DB_set_file_io():DWORD;
+ Tin6_addr_local = record
+ case integer of 
+ 0:(addr8  :array [0..15] of byte);
+ 1:(addr16 :array [0..8]  of byte);
+ end;
+
+ function  IP2Location_readIPv6Address(handle:integer;position:Cardinal):Tin6_addr_local;
+ function  IP2Location_read32(handle:integer;position:Cardinal):Cardinal;
+ function  IP2Location_read8(handle:integer;position:Cardinal):Byte;
+ function  IP2Location_readStr(handle:integer;position:Cardinal):PChar;
+ function  IP2Location_readFloat(handle:integer;position:Cardinal):Single;
+ function  IP2Location_DB_set_file_io():Cardinal;
  function  IP2Location_DB_set_memory_cache(filehandle:integer):integer;
  function  IP2Location_DB_set_shared_memory(filehandle:integer):integer;
  function  IP2Location_DB_close(filehandle:integer):integer;
@@ -29,7 +35,6 @@ type
 
 implementation
 
-uses iMath;
 
 const
 IP2LOCATION_SHM ='/IP2location_Shm';
@@ -121,7 +126,7 @@ begin
  result:=0;
  end;
  
- function IP2Location_read8(handle:integer;position:DWORD):byte;
+ function IP2Location_read8(handle:integer;position:Cardinal):byte;
  begin
   result:=0;
   	if (DB_access_type = IP2LOCATION_FILE_IO) and (handle <> 0) then
@@ -153,6 +158,8 @@ begin
 	 end;
 	result:= (byte4 shl 24) or (byte3 shl 16) or (byte2 shl 8) or byte1;  
   end;
+  
+
 
 function IP2Location_readStr(handle:integer;position:cardinal):PChar;
 var _size:byte;P_In:PAnsiChar;
@@ -197,66 +204,17 @@ begin
 {$ENDIF}
 end;
 
-function IP2Location_mp2string (mp:mp_int):PAnsiChar;
-begin
-result:=AllocMem(128);
-mp_int_to_string(mp,10,result,128);
-end;
-
-function IP2Location_read128(handle:integer;position:DWORD):PAnsiChar;
- var
-  b1_31,b32_63,b64_95,b96_127:DWORD;
-  _result, multiplier, mp96_127, mp64_95, mp32_63, mp1_31:mp_int;
-  begin
-     b96_127  := IP2Location_read32(handle, position);
-	 b64_95   := IP2Location_read32(handle, position + 4); 
-	 b32_63   := IP2Location_read32(handle, position + 8);
-	 b1_31    := IP2Location_read32(handle, position + 12);
-	 
-	_result   :=mp_int_alloc;
-	multiplier:=mp_int_alloc;
-	mp96_127  :=mp_int_alloc;
-	mp64_95   :=mp_int_alloc;
-	mp32_63   :=mp_int_alloc;
-	mp1_31    :=mp_int_alloc;
-	
-	mp_int_init(_result);
-	mp_int_init(multiplier);
-	mp_int_init(mp96_127);
-	mp_int_init(mp64_95);
-	mp_int_init(mp32_63);
-	mp_int_init(mp1_31);
-	
- 	mp_int_init_value(multiplier, 65536);
-	mp_int_mul(multiplier, multiplier, multiplier);
-	
-	mp_int_init_value(mp96_127, b96_127);
-	mp_int_init_value(mp64_95, b64_95);
-	mp_int_init_value(mp32_63, b32_63);
-	mp_int_init_value(mp1_31, b1_31);
-	
-    mp_int_mul(mp1_31, multiplier, mp1_31);
-	mp_int_mul(mp1_31, multiplier, mp1_31);
-	mp_int_mul(mp1_31, multiplier, mp1_31);
-	
-    mp_int_mul(mp32_63,multiplier,mp32_63);
-	mp_int_mul(mp32_63,multiplier,mp32_63);
-	
- 	mp_int_mul(mp64_95, multiplier, mp64_95);
-	
-	mp_int_add(mp1_31, mp32_63, _result);
-	mp_int_add(_result, mp64_95, _result);
-	mp_int_add(_result, mp96_127, _result);
-
-   result:=IP2Location_mp2string(_result);
-   
-   
- 
-end;
+ function  IP2Location_readIPv6Address(handle:integer;position:Cardinal):Tin6_addr_local;
+ var i:integer;
+ begin
+  with result do 
+   for i:=0 to 15 do 
+    addr8[i]:=IP2Location_read8(handle, position + (15-i)); 
+ end;
 
 
 
-function IP2Location_DB_set_file_io():DWORD;
+function IP2Location_DB_set_file_io():Cardinal;
 begin
 
 end;
