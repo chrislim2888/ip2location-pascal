@@ -12,13 +12,13 @@ IP2Location binary databases for applications written in Pascal/Delphi.
 3. Run the sample code provided inside the zip file.
 
 # Sample BIN Databases
-* Download free IP2Location LITE databases at [http://lite.ip2location.com](http://lite.ip2location.com)  
-* Download IP2Location sample databases at [http://www.ip2location.com/developers](http://www.ip2location.com/developers)
+* Download free IP2Location LITE databases at [https://lite.ip2location.com](https://lite.ip2location.com)  
+* Download IP2Location sample databases at [https://www.ip2location.com/developers](https://www.ip2location.com/developers)
 
 
 # Support
 
 Email: support@ip2location.com
-Website: http://www.ip2location.com
+Website: https://www.ip2location.com
 
 
